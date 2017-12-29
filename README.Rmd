@@ -40,7 +40,7 @@ library(glmnet)
 glmnet_cv <- formulize(cv.glmnet)
 
 glmnet_model <- glmnet_cv(mpg ~ drat + hp, mtcars)
-head(predict(glmnet_model, mtcars))
+predict(glmnet_model, head(mtcars))
 ```
 
 How it works: `formulize` creates a copy of function, in this case `cv.glmnet`. This wrapper then works like the origninal function, except it also makes the output of the original function a `wrapped` object and adds a new element `formula`:
@@ -56,6 +56,20 @@ You may also be interested in the more ~~dangerous~~ exciting version `genericiz
 
 ```{r}
 genericize(cv.glmnet)  # NOTE: do not do: genericize(glmnet::cv.glmnet) atm
+
+form <- mpg ~ drat + hp
+X <- model.matrix(form, mtcars)
+y <- mtcars$mpg
+
+# both of the following should work
+wrapped_model <- cv.glmnet(form, mtcars, intercept = TRUE)
+unwrapped_model <- cv.glmnet(X, y)
+
+# question: why do the following disagree? intercept related?
+# TODO: INTERCEPT IN FORMULA_HELPER AND PREDICT.WRAPPED
+
+predict(wrapped_model, head(mtcars))
+predict(unwrapped_model, head(model.matrix(form, mtcars)))
 ```
 
 This creates a new S3 generic `cv.glmnet`, sets the provided function as the default method (`cv.glmnet.default`), and adds a formula method `cv.glmnet.formula` using `formulize`. 

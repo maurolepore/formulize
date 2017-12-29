@@ -14,8 +14,6 @@
 #' @importFrom stats model.response model.frame model.matrix
 formula_helper <- function(formula, data, ...) {
 
-  # TODO: update the match.call here
-
   if ("intercept" %in% names(match.call())) {
     stop("Do not specify ", sQuote("intercept"), " when using formula interface.")
   }
@@ -85,8 +83,7 @@ formulize <- function(f) {
   wrapped_f <- wrap(f)
   function(formula, data, ...) {
     design <- formula_helper(formula, data)
-    # TODO: allow user to specify names of X/y
-    obj <- wrapped_f(design$X, design$y, intercept = design$intercept, ...)
+    obj <- wrapped_f(design$X, design$y, ...)
     obj$formula <- formula
     obj
   }

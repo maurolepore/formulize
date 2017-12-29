@@ -35,12 +35,12 @@ glmnet_cv <- formulize(cv.glmnet)
 glmnet_model <- glmnet_cv(mpg ~ drat + hp, mtcars)
 head(predict(glmnet_model, mtcars))
 #>                          1
-#> Mazda RX4         22.35385
-#> Mazda RX4 Wag     22.35385
-#> Datsun 710        22.85056
-#> Hornet 4 Drive    19.97909
-#> Hornet Sportabout 17.72895
-#> Valiant           19.24104
+#> Mazda RX4         22.25028
+#> Mazda RX4 Wag     22.25028
+#> Datsun 710        22.73249
+#> Hornet 4 Drive    20.01959
+#> Hornet Sportabout 17.84620
+#> Valiant           19.33092
 ```
 
 How it works: `formulize` creates a copy of function, in this case `cv.glmnet`. This wrapper then works like the origninal function, except it also makes the output of the original function a `wrapped` object and adds a new element `formula`:
@@ -50,6 +50,7 @@ class(glmnet_model)
 #> [1] "wrapped"   "cv.glmnet"
 glmnet_model$formula
 #> mpg ~ drat + hp
+#> <environment: 0x00000000078e2a20>
 ```
 
 If the original modelling function doesn't return a list, `formulize` will probably break. Everything should work like normal, except for prediction, in which case there's a special S3 method for `wrapped` objects. Methods that require translation into matrix data format will probably not work, but otherwise things should work as normal.

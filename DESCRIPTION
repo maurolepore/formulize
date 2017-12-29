@@ -1,0 +1,18 @@
+Package: formulize
+Version: 0.0.0.9000
+Title: Add Formula Interfaces to R Packages
+Description: This package automatically generates wrappers for modellings functions
+    that accept data as a data matrix X and a data vector y and produces
+    a wrapper that allows users to specify input data with a formula and a data frame.
+    In addition to generating formula interfaces, users may also generated wrapper S3
+    generics.
+Authors@R: person("Alex", "Hayes", , "alexpghayes@gmail.com", c("aut", "cre"))
+License: MIT + file LICENSE
+Encoding: UTF-8
+LazyData: true
+ByteCompile: true
+Suggests: 
+    testthat
+Imports: 
+    rlang
+RoxygenNote: 6.0.1

@@ -13,6 +13,8 @@ knitr::opts_chunk$set(
 )
 ```
 
+# TODO: ADD ISSUE: wrapped models formula environment is not global environment, probs should change this
+
 # formulize
 
 If you:

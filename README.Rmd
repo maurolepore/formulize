@@ -80,7 +80,7 @@ predict(frm_model, head(mtcars))
 predict(rec_model, head(mtcars))
 ```
 
-This creates a new S3 generic `cv.glmnet`, sets the provided function as the default method (`cv.glmnet.default`), and adds a formula method `cv.glmnet.formula` using `formulize`. 
+This creates a new S3 generic `cv.glmnet`, sets the provided function as the default method (`cv.glmnet.default`), and adds methods `cv.glmnet.formula` and `cv.glmnet.recipe` using `formulize`. 
 
 This will mask `cv.glmnet` and features no safety checks because safety isn't fun.
 

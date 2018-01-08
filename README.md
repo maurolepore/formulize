@@ -50,12 +50,12 @@ rec <- recipe(mpg ~ drat + hp, data = mtcars)
 glmnet_model2 <- glmnet_cv(rec, mtcars)
 predict(glmnet_model2, head(mtcars))
 #>             1
-#> [1,] 22.44828
-#> [2,] 22.44828
-#> [3,] 22.95820
-#> [4,] 19.94207
-#> [5,] 17.62202
-#> [6,] 19.15896
+#> [1,] 22.35392
+#> [2,] 22.35392
+#> [3,] 22.85062
+#> [4,] 19.97897
+#> [5,] 17.72884
+#> [6,] 19.24084
 ```
 
 You may also be interested in the more ~~dangerous~~ exciting version `genericize`, which you should call for its side effects.
@@ -102,7 +102,7 @@ predict(rec_model, head(mtcars))
 #> [6,] 19.33070
 ```
 
-This creates a new S3 generic `cv.glmnet`, sets the provided function as the default method (`cv.glmnet.default`), and adds a formula method `cv.glmnet.formula` using `formulize`.
+This creates a new S3 generic `cv.glmnet`, sets the provided function as the default method (`cv.glmnet.default`), and adds methods `cv.glmnet.formula` and `cv.glmnet.recipe` using `formulize`.
 
 This will mask `cv.glmnet` and features no safety checks because safety isn't fun.
 

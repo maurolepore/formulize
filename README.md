@@ -1,9 +1,9 @@
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
-[![Travis build status](https://travis-ci.org/alexpghayes/formulize.svg?branch=master)](https://travis-ci.org/alexpghayes/formulize) [![Coverage status](https://codecov.io/gh/alexpghayes/formulize/branch/master/graph/badge.svg)](https://codecov.io/github/alexpghayes/formulize?branch=master)
-
 formulize
 =========
+
+[![Travis build status](https://travis-ci.org/alexpghayes/formulize.svg?branch=master)](https://travis-ci.org/alexpghayes/formulize) [![AppVeyor Build Status](https://ci.appveyor.com/api/projects/status/github/alexpghayes/formulize?branch=master&svg=true)](https://ci.appveyor.com/project/alexpghayes/formulize) [![Coverage status](https://codecov.io/gh/alexpghayes/formulize/branch/master/graph/badge.svg)](https://codecov.io/github/alexpghayes/formulize?branch=master)
 
 If you:
 
@@ -37,12 +37,12 @@ glmnet_cv <- formulize(cv.glmnet)
 glmnet_model <- glmnet_cv(mpg ~ drat + hp - 1, mtcars)
 predict(glmnet_model, head(mtcars))
 #>                          1
-#> Mazda RX4         22.35385
-#> Mazda RX4 Wag     22.35385
-#> Datsun 710        22.85056
-#> Hornet 4 Drive    19.97909
-#> Hornet Sportabout 17.72895
-#> Valiant           19.24104
+#> Mazda RX4         22.13660
+#> Mazda RX4 Wag     22.13660
+#> Datsun 710        22.60290
+#> Hornet 4 Drive    20.06405
+#> Hornet Sportabout 17.97487
+#> Valiant           19.42956
 ```
 
 You may also be interested in the more ~~dangerous~~ exciting version `genericize`, which you should call for its side effects.

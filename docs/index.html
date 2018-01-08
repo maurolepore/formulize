@@ -37,6 +37,9 @@
 <li>
   <a href="reference/index.html">Reference</a>
 </li>
+<li>
+  <a href="news/index.html">News</a>
+</li>
       </ul>
 <ul class="nav navbar-nav navbar-right"></ul>
 </div>
@@ -55,10 +58,10 @@
     
 <div class="contents">
 <!-- README.md is generated from README.Rmd. Please edit that file -->
-
 <div id="formulize" class="section level1">
 <div class="page-header"><h1 class="hasAnchor">
 <a href="#formulize" class="anchor"></a>formulize</h1></div>
+
 <p>If you:</p>
 <ul>
 <li>like using formulas and data frames to specify design matrices</li>
@@ -85,12 +88,12 @@ glmnet_cv &lt;-<span class="st"> </span><span class="kw"><a href="reference/form
 glmnet_model &lt;-<span class="st"> </span><span class="kw">glmnet_cv</span>(mpg <span class="op">~</span><span class="st"> </span>drat <span class="op">+</span><span class="st"> </span>hp <span class="op">-</span><span class="st"> </span><span class="dv">1</span>, mtcars)
 <span class="kw">predict</span>(glmnet_model, <span class="kw">head</span>(mtcars))
 <span class="co">#&gt;                          1</span>
-<span class="co">#&gt; Mazda RX4         22.44822</span>
-<span class="co">#&gt; Mazda RX4 Wag     22.44822</span>
-<span class="co">#&gt; Datsun 710        22.95815</span>
-<span class="co">#&gt; Hornet 4 Drive    19.94218</span>
-<span class="co">#&gt; Hornet Sportabout 17.62212</span>
-<span class="co">#&gt; Valiant           19.15914</span></code></pre></div>
+<span class="co">#&gt; Mazda RX4         22.25028</span>
+<span class="co">#&gt; Mazda RX4 Wag     22.25028</span>
+<span class="co">#&gt; Datsun 710        22.73249</span>
+<span class="co">#&gt; Hornet 4 Drive    20.01959</span>
+<span class="co">#&gt; Hornet Sportabout 17.84620</span>
+<span class="co">#&gt; Valiant           19.33092</span></code></pre></div>
 <p>You may also be interested in the more <del>dangerous</del> exciting version <code>genericize</code>, which you should call for its side effects.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw"><a href="reference/genericize.html">genericize</a></span>(cv.glmnet)
 
@@ -148,6 +151,7 @@ unwrapped_model &lt;-<span class="st"> </span><span class="kw">cv.glmnet</span>(
 <h2>Dev status</h2>
 <ul class="list-unstyled">
 <li><a href="https://travis-ci.org/alexpghayes/formulize"><img src="https://travis-ci.org/alexpghayes/formulize.svg?branch=master" alt="Travis build status"></a></li>
+<li><a href="https://ci.appveyor.com/project/alexpghayes/formulize"><img src="https://ci.appveyor.com/api/projects/status/github/alexpghayes/formulize?branch=master&amp;svg=true" alt="AppVeyor Build Status"></a></li>
 <li><a href="https://codecov.io/github/alexpghayes/formulize?branch=master"><img src="https://codecov.io/gh/alexpghayes/formulize/branch/master/graph/badge.svg" alt="Coverage status"></a></li>
 </ul>
 </div>

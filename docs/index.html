@@ -85,12 +85,12 @@ glmnet_cv &lt;-<span class="st"> </span><span class="kw"><a href="reference/form
 glmnet_model &lt;-<span class="st"> </span><span class="kw">glmnet_cv</span>(mpg <span class="op">~</span><span class="st"> </span>drat <span class="op">+</span><span class="st"> </span>hp <span class="op">-</span><span class="st"> </span><span class="dv">1</span>, mtcars)
 <span class="kw">predict</span>(glmnet_model, <span class="kw">head</span>(mtcars))
 <span class="co">#&gt;                          1</span>
-<span class="co">#&gt; Mazda RX4         22.13660</span>
-<span class="co">#&gt; Mazda RX4 Wag     22.13660</span>
-<span class="co">#&gt; Datsun 710        22.60290</span>
-<span class="co">#&gt; Hornet 4 Drive    20.06405</span>
-<span class="co">#&gt; Hornet Sportabout 17.97487</span>
-<span class="co">#&gt; Valiant           19.42956</span></code></pre></div>
+<span class="co">#&gt; Mazda RX4         22.44822</span>
+<span class="co">#&gt; Mazda RX4 Wag     22.44822</span>
+<span class="co">#&gt; Datsun 710        22.95815</span>
+<span class="co">#&gt; Hornet 4 Drive    19.94218</span>
+<span class="co">#&gt; Hornet Sportabout 17.62212</span>
+<span class="co">#&gt; Valiant           19.15914</span></code></pre></div>
 <p>You may also be interested in the more <del>dangerous</del> exciting version <code>genericize</code>, which you should call for its side effects.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw"><a href="reference/genericize.html">genericize</a></span>(cv.glmnet)
 

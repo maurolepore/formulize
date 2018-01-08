@@ -37,12 +37,12 @@ glmnet_cv <- formulize(cv.glmnet)
 glmnet_model <- glmnet_cv(mpg ~ drat + hp - 1, mtcars)
 predict(glmnet_model, head(mtcars))
 #>                          1
-#> Mazda RX4         22.25028
-#> Mazda RX4 Wag     22.25028
-#> Datsun 710        22.73249
-#> Hornet 4 Drive    20.01959
-#> Hornet Sportabout 17.84620
-#> Valiant           19.33092
+#> Mazda RX4         22.35385
+#> Mazda RX4 Wag     22.35385
+#> Datsun 710        22.85056
+#> Hornet 4 Drive    19.97909
+#> Hornet Sportabout 17.72895
+#> Valiant           19.24104
 ```
 
 You may also be interested in the more ~~dangerous~~ exciting version `genericize`, which you should call for its side effects.

@@ -3,3 +3,5 @@
 S3method(predict,wrapped)
 export(formulize)
 export(genericize)
+importFrom(recipes,all_outcomes)
+importFrom(recipes,all_predictors)

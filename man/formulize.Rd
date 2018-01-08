@@ -2,18 +2,21 @@
 % Please edit documentation in R/formulize.R
 \name{formulize}
 \alias{formulize}
-\title{Create a formula interface to a modelling method}
+\title{Create a formula/recipe interface to a modelling method}
 \usage{
 formulize(f)
 }
 \arguments{
-\item{f}{A function with a matrix/vector interface.}
+\item{f}{A function with a matrix/vector interface. Assumes data is passed
+to this function via some combination of arguments \code{x}, \code{X},
+\code{y}, \code{Y}}
 }
 \value{
-The same function, wrapped to have a formula/dataframe interface.
+The same function, wrapped to have formula/dataframe and
+  recipe/dataframe interfaces.
 }
 \description{
-Create a formula interface to a modelling method
+Create a formula/recipe interface to a modelling method
 }
 \examples{
 

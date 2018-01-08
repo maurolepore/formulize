@@ -1,4 +1,8 @@
-get_data_design <- function(formula, data, ...) {
+get_design <- function(design, data, ...) {
+  UseMethod("get_design")
+}
+
+get_design.formula <- function(formula, data, ...) {
 
   y <- stats::model.response(stats::model.frame(formula, data))
   X <- stats::model.matrix(formula, data)
@@ -13,6 +17,23 @@ get_data_design <- function(formula, data, ...) {
   list(X = X, y = y, intercept = intercept)
 }
 
+#' @importFrom recipes all_predictors all_outcomes
+get_design.recipe <- function(recipe, data, ...) {
+
+  prepped <- recipes::prep(recipe)
+  X <- recipes::bake(prepped, data, all_predictors())
+  y <- recipes::bake(prepped, data, all_outcomes())
+
+  X <- as.matrix(X)
+  y <- as.matrix(y)
+  y <- if (ncol(y) == 1) as.vector(y) else y
+
+  # TODO: update to detect_step after PR gets merged
+  intercept <- "step_intercept" %in% unlist(lapply(prepped$steps, class))
+
+  list(X = X, y = y, intercept = intercept)
+}
+
 #' Predict on new data form a \code{wrapped} object
 #'
 #' @param object Object of class \code{wrapped} with a subclass with a
@@ -22,18 +43,27 @@ get_data_design <- function(formula, data, ...) {
 #'
 #' @return Predictions from subclass predict method.
 #' @export
+#' @importFrom recipes all_predictors
 predict.wrapped <- function(object, newdata = NULL, ...) {
-  if (!is.null(object$formula)) {
-    newdata <- get_data_design(object$formula, newdata)$X
+
+  des <- object$design
+
+  if (inherits(des, "formula")) {
+    newdata <- stats::model.matrix(des, newdata)
+  } else {
+    newdata <- as.matrix(recipes::bake(des, newdata, all_predictors()))
   }
   NextMethod()
 }
 
-#' Create a formula interface to a modelling method
+#' Create a formula/recipe interface to a modelling method
 #'
-#' @param f A function with a matrix/vector interface.
+#' @param f A function with a matrix/vector interface. Assumes data is passed
+#'   to this function via some combination of arguments \code{x}, \code{X},
+#'   \code{y}, \code{Y}
 #'
-#' @return The same function, wrapped to have a formula/dataframe interface.
+#' @return The same function, wrapped to have formula/dataframe and
+#'   recipe/dataframe interfaces.
 #' @export
 #'
 #' @examples
@@ -46,14 +76,18 @@ predict.wrapped <- function(object, newdata = NULL, ...) {
 #' predict(model, head(mtcars))
 #'
 formulize <- function(f) {
-  wrapper <- f
-  function(formula, data, ...) {
+  function(design, data, ...) {
 
-    # TODO: match on x/X/y/Y rather than positionally
+    des <- get_design(design, data)
 
-    design <- get_data_design(formula, data)
-    object <- wrapper(design$X, design$y, ...)
-    object$formula <- formula
+    # the following can break if functions have both `x` and `X` as arguments
+    x_arg <- match.arg(c("x", "X"), names(formals(f)), several.ok = TRUE)
+    y_arg <- match.arg(c("y", "Y"), names(formals(f)), several.ok = TRUE)
+
+    args <- list(des$X, des$y)
+    names(args) <- c(x_arg, y_arg)
+    object <- do.call("f", args)
+    object$design <- design
     class(object) <- c("wrapped", class(object))
     object
   }
@@ -84,9 +118,11 @@ genericize <- function(f, fname = NULL) {
   env <- globalenv()
   gen <- rlang::expr_interp(function(obj, ...) UseMethod(!!fname))
   environment(gen) <- env
+  wrapper <- formulize(f)
 
   assign(fname, gen, envir = env)
   assign(paste0(fname, ".default"), f, envir = env)
-  assign(paste0(fname, ".formula"), formulize(f), envir = env)
+  assign(paste0(fname, ".formula"), wrapper, envir = env)
+  assign(paste0(fname, ".recipe"), wrapper, envir = env)
 }
 

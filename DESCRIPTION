@@ -9,7 +9,7 @@ Description: Automatically generates wrappers for modelling functions
     generics.
 License: MIT + file LICENSE
 Depends: 
-    R (>= 3.1)
+    R (>= 3.4)
 Imports: 
     rlang,
     recipes

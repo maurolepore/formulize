@@ -1,25 +1,7 @@
-#' Convert a formula and data frame to a design matrix and response vector
-#'
-#' This function is not exported.
-#'
-#' @param formula Formula specifying design matrix.
-#' @param data Data frame in which to evaluate formula.
-#' @param remove_intercept
-#' @param ... Included so we can check if an \code{intercept} was specified.
-#'
-#' @return A list with three named entries: a data matrix \code{X},
-#'   a response vector (potentially a matrix later on) \code{y}, and
-#'   a logical \code{intercept} indicating if the formula specified that
-#'   an intercept should be added to the design matrix.
-#'
-#' @importFrom stats model.response model.frame model.matrix
-formula_helper <- function(formula,
-                           data,
-                           remove_intercept,
-                           ...) {
+get_data_design <- function(formula, data, ...) {
 
-  y <- model.response(model.frame(formula, data))
-  X <- model.matrix(formula, data)
+  y <- stats::model.response(stats::model.frame(formula, data))
+  X <- stats::model.matrix(formula, data)
 
   assign <- attr(X, "assign")
   intercept <- 0 %in% assign        # check if formula included intercept term
@@ -28,117 +10,79 @@ formula_helper <- function(formula,
     warning("Intercept only models may break things.")
   }
 
-  if (remove_intercept) {
-    X <- X[, !(colnames(X) %in% "(Intercept)"), drop = FALSE]
-  }
-
   list(X = X, y = y, intercept = intercept)
 }
 
-
-#' TODOCUMENTDO
+#' Predict on new data form a \code{wrapped} object
 #'
-#' @param object doc doc
-#' @param newdata more doc
-#' @param ... woops
+#' @param object Object of class \code{wrapped} with a subclass with a
+#'   valid \code{predict} method.
+#' @param newdata Data to predict on.
+#' @param ... Additional arguments to pass to the subclass predict method.
 #'
-#' @return
+#' @return Predictions from subclass predict method.
 #' @export
-#'
-#' @examples
 predict.wrapped <- function(object, newdata = NULL, ...) {
   if (!is.null(object$formula)) {
-    newdata <- formula_helper(formula = object$formula,
-                              data = newdata,
-                              remove_intercept = object$has_int_arg)$X
+    newdata <- get_data_design(object$formula, newdata)$X
   }
   NextMethod()
 }
 
-#' Document me pleeeease
+#' Create a formula interface to a modelling method
 #'
-#' @param f thing
+#' @param f A function with a matrix/vector interface.
 #'
-#' @return
-#' @importFrom rlang exprs lang "!!" "!!!"
-#' @export
-wrap <- function(f) {
-  new_exprs <- exprs(obj <- !!body(f), class(obj) <- c("wrapped", class(obj)), obj)
-  new_body <- lang("{", !!!new_exprs)
-  body(f) <- new_body
-  f
-}
-
-#' Also meeeee
-#'
-#' @param f nother thing
-#'
-#' @return
+#' @return The same function, wrapped to have a formula/dataframe interface.
 #' @export
 #'
 #' @examples
+#'
+#' library(glmnet)
+#'
+#' glmnet_form <- formulize(cv.glmnet)
+#'
+#' model <- glmnet_form(mpg ~ drat * hp - 1, mtcars)
+#' predict(model, head(mtcars))
+#'
 formulize <- function(f) {
-  wrapped_f <- wrap(f)
+  wrapper <- f
   function(formula, data, ...) {
 
-    # TODO: add intercept_control argument? always strip, look for arg name
+    # TODO: match on x/X/y/Y rather than positionally
 
-    # if there's an intercept argument:
-    #   1. don't create an intercept column
-    #   2. passing something to it during the formulized train call
-    has_int_arg <- "intercept" %in% tolower(names(formals(f)))
-
-    design <- formula_helper(formula = formula,
-                             data = data,
-                             remove_intercept = has_int_arg)
-
-    # if there's an intercept argument, the user shouldn't specify it since we will
-    # warn them if they do
-    if ("intercept" %in% tolower(names(match.call(f)))) {
-      stop("Do not specify `intercept` argument when using formula interface.")
-    }
-
-    # TODO: match on x/X/y/Y rather than positional
-
-    if (has_int_arg) {
-      object <- wrapped_f(design$X, design$y, intercept = design$intercept, ...)
-    } else {
-      object <- wrapped_f(design$X, design$y, ...)
-    }
-
+    design <- get_data_design(formula, data)
+    object <- wrapper(design$X, design$y, ...)
     object$formula <- formula
-    object$has_int_arg <- has_int_arg
+    class(object) <- c("wrapped", class(object))
     object
   }
 }
 
-#' A good day to title hard
+#' Turn a modelling function into an S3 modelling generic
 #'
-#' TODO: calls like glmnet::cv.glmnet break function name discovery, maybe other things
-#' TODO: don't call genericize twice, call it once for side-effects
-#' TODO: don't call genericize on things that already have a nice formula interface
+#' Call this function for its side effects: (1) creating an S3 generic of the
+#' passed modelling function, (2) creating a default method that's exactly the
+#' X/y interface to formulize, (3) creating a formula method with formulize.
 #'
-#' Title
+#' @param f Modelling function to turn into a generic.
+#' @param fname Optional name of new generic. Useful because otherwise the
+#'   created generic masks the original modelling function.
 #'
-#' @param f more stuff
-#' @param fname so much good documentation
-#'
-#' @return
+#' @return Nothing.
 #' @export
-#'
-#' @examples
 genericize <- function(f, fname = NULL) {
 
   fname <- if (is.null(fname)) as.character(substitute(f)) else fname
 
-  if (utils::isS3stdGeneric(f))
-    stop(paste(fname, "already a S3 generic. Use `formulize` to add formula method."))
+  if ("::" %in% fname || ":::" %in% fname)
+    stop("Do not use genericize with double or triple colon operators.")
 
-  gen <- rlang::expr_interp(function(obj, ...) {
-    UseMethod(!!fname)
-  })
+  if (utils::isS3stdGeneric(f))
+    stop(paste("S3 generic already exists for this function."))
 
   env <- globalenv()
+  gen <- rlang::expr_interp(function(obj, ...) UseMethod(!!fname))
   environment(gen) <- env
 
   assign(fname, gen, envir = env)

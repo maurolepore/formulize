@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>A good day to title hard — genericize â€¢ formulize</title>
+<title>Turn a modelling function into an S3 modelling generic — genericize â€¢ formulize</title>
 
 <!-- jquery -->
 <script src="https://code.jquery.com/jquery-3.1.0.min.js" integrity="sha384-nrOSfDHtoPMzJHjVTdCopGqIqeYETSXhZDFyniQ8ZHcVy08QesyHcnOUpMpqnmWq" crossorigin="anonymous"></script>
@@ -75,13 +75,13 @@
       <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>A good day to title hard</h1>
+    <h1>Turn a modelling function into an S3 modelling generic</h1>
     </div>
 
     
-    <p>TODO: calls like glmnet::cv.glmnet break function name discovery, maybe other things
-TODO: don't call genericize twice, call it once for side-effects
-TODO: don't call genericize on things that already have a nice formula interface</p>
+    <p>Call this function for its side effects: (1) creating an S3 generic of the
+passed modelling function, (2) creating a default method that's exactly the
+X/y interface to formulize, (3) creating a formula method with formulize.</p>
     
 
     <pre class="usage"><span class='fu'>genericize</span>(<span class='no'>f</span>, <span class='kw'>fname</span> <span class='kw'>=</span> <span class='kw'>NULL</span>)</pre>
@@ -91,17 +91,18 @@ TODO: don't call genericize on things that already have a nice formula interface
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
       <th>f</th>
-      <td><p>more stuff</p></td>
+      <td><p>Modelling function to turn into a generic.</p></td>
     </tr>
     <tr>
       <th>fname</th>
-      <td><p>so much good documentation</p></td>
+      <td><p>Optional name of new generic. Useful because otherwise the
+created generic masks the original modelling function.</p></td>
     </tr>
     </table>
     
-    <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
+    <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
-    <p>Title</p>
+    <p>Nothing.</p>
     
 
   </div>
@@ -110,7 +111,7 @@ TODO: don't call genericize on things that already have a nice formula interface
     <ul class="nav nav-pills nav-stacked">
       <li><a href="#arguments">Arguments</a></li>
       
-      <li><a href="#details">Details</a></li>
+      <li><a href="#value">Value</a></li>
           </ul>
 
   </div>

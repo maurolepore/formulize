@@ -3,3 +3,5 @@
 ^\.Rproj\.user$
 ^LICENSE\.md$
 ^docs$
+^\.travis\.yml$
+^codecov\.yml$

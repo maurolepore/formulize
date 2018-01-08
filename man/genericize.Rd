@@ -2,20 +2,21 @@
 % Please edit documentation in R/formulize.R
 \name{genericize}
 \alias{genericize}
-\title{A good day to title hard}
+\title{Turn a modelling function into an S3 modelling generic}
 \usage{
 genericize(f, fname = NULL)
 }
 \arguments{
-\item{f}{more stuff}
+\item{f}{Modelling function to turn into a generic.}
 
-\item{fname}{so much good documentation}
+\item{fname}{Optional name of new generic. Useful because otherwise the
+created generic masks the original modelling function.}
+}
+\value{
+Nothing.
 }
 \description{
-TODO: calls like glmnet::cv.glmnet break function name discovery, maybe other things
-TODO: don't call genericize twice, call it once for side-effects
-TODO: don't call genericize on things that already have a nice formula interface
-}
-\details{
-Title
+Call this function for its side effects: (1) creating an S3 generic of the
+passed modelling function, (2) creating a default method that's exactly the
+X/y interface to formulize, (3) creating a formula method with formulize.
 }

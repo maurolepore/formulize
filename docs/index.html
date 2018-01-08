@@ -55,6 +55,7 @@
     
 <div class="contents">
 <!-- README.md is generated from README.Rmd. Please edit that file -->
+
 <div id="formulize" class="section level1">
 <div class="page-header"><h1 class="hasAnchor">
 <a href="#formulize" class="anchor"></a>formulize</h1></div>
@@ -65,13 +66,13 @@
 <li>don’t have the time or motivation to write a formula wrapper around these interfaces</li>
 <li>like untested and hacky software written by amateurs</li>
 </ul>
-<p>then <code>formulize</code> may be for you. Formulize is currently entirely untested, but you can still install formulize from github with:</p>
+<p>then <code>formulize</code> may be for you. Formulize is very new, but you can still install formulize from github with:</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># install.packages("devtools")</span>
 devtools<span class="op">::</span><span class="kw"><a href="http://www.rdocumentation.org/packages/devtools/topics/install_github">install_github</a></span>(<span class="st">"alexpghayes/formulize"</span>)</code></pre></div>
 <div id="adding-a-formula-interface" class="section level2">
 <h2 class="hasAnchor">
 <a href="#adding-a-formula-interface" class="anchor"></a>Adding a formula interface</h2>
-<p>Say you want to add a formula interface to an existing modelling function, say <code>glmnet</code>. Then you could do the following</p>
+<p>Suppose you want to add a formula interface to an existing modelling function, say <code>cv.glmnet</code>. Then you could do the following</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(formulize)
 <span class="kw">library</span>(glmnet)
 <span class="co">#&gt; Loading required package: Matrix</span>
@@ -81,8 +82,8 @@ devtools<span class="op">::</span><span class="kw"><a href="http://www.rdocument
 
 glmnet_cv &lt;-<span class="st"> </span><span class="kw"><a href="reference/formulize.html">formulize</a></span>(cv.glmnet)
 
-glmnet_model &lt;-<span class="st"> </span><span class="kw">glmnet_cv</span>(mpg <span class="op">~</span><span class="st"> </span>drat <span class="op">+</span><span class="st"> </span>hp, mtcars)
-<span class="kw">head</span>(<span class="kw">predict</span>(glmnet_model, mtcars))
+glmnet_model &lt;-<span class="st"> </span><span class="kw">glmnet_cv</span>(mpg <span class="op">~</span><span class="st"> </span>drat <span class="op">+</span><span class="st"> </span>hp <span class="op">-</span><span class="st"> </span><span class="dv">1</span>, mtcars)
+<span class="kw">predict</span>(glmnet_model, <span class="kw">head</span>(mtcars))
 <span class="co">#&gt;                          1</span>
 <span class="co">#&gt; Mazda RX4         22.13660</span>
 <span class="co">#&gt; Mazda RX4 Wag     22.13660</span>
@@ -90,26 +91,48 @@ glmnet_model &lt;-<span class="st"> </span><span class="kw">glmnet_cv</span>(mpg
 <span class="co">#&gt; Hornet 4 Drive    20.06405</span>
 <span class="co">#&gt; Hornet Sportabout 17.97487</span>
 <span class="co">#&gt; Valiant           19.42956</span></code></pre></div>
-<p>How it works: <code>formulize</code> creates a copy of function, in this case <code>cv.glmnet</code>. This wrapper then works like the origninal function, except it also makes the output of the original function a <code>wrapped</code> object and adds a new element <code>formula</code>:</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">class</span>(glmnet_model)
-<span class="co">#&gt; [1] "wrapped"   "cv.glmnet"</span>
-glmnet_model<span class="op">$</span>formula
-<span class="co">#&gt; mpg ~ drat + hp</span></code></pre></div>
-<p>If the original modelling function doesn’t return a list, <code>formulize</code> will probably break. Everything should work like normal, except for prediction, in which case there’s a special S3 method for <code>wrapped</code> objects. Methods that require translation into matrix data format will probably not work, but otherwise things should work as normal.</p>
 <p>You may also be interested in the more <del>dangerous</del> exciting version <code>genericize</code>, which you should call for its side effects.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw"><a href="reference/genericize.html">genericize</a></span>(cv.glmnet)  <span class="co"># </span><span class="al">NOTE</span><span class="co">: do not do: genericize(glmnet::cv.glmnet) atm</span></code></pre></div>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw"><a href="reference/genericize.html">genericize</a></span>(cv.glmnet)
+
+form &lt;-<span class="st"> </span>mpg <span class="op">~</span><span class="st"> </span>drat <span class="op">+</span><span class="st"> </span>hp <span class="op">-</span><span class="st"> </span><span class="dv">1</span>
+X &lt;-<span class="st"> </span><span class="kw">model.matrix</span>(form, mtcars)
+y &lt;-<span class="st"> </span>mtcars<span class="op">$</span>mpg
+
+<span class="kw">set.seed</span>(<span class="dv">27</span>)
+wrapped_model &lt;-<span class="st"> </span><span class="kw">cv.glmnet</span>(form, mtcars, <span class="dt">intercept =</span> <span class="ot">TRUE</span>)
+
+<span class="kw">set.seed</span>(<span class="dv">27</span>)
+unwrapped_model &lt;-<span class="st"> </span><span class="kw">cv.glmnet</span>(X, y, <span class="dt">intercept =</span> <span class="ot">TRUE</span>)
+
+<span class="kw">predict</span>(wrapped_model, <span class="kw">head</span>(mtcars))
+<span class="co">#&gt;                          1</span>
+<span class="co">#&gt; Mazda RX4         22.25028</span>
+<span class="co">#&gt; Mazda RX4 Wag     22.25028</span>
+<span class="co">#&gt; Datsun 710        22.73249</span>
+<span class="co">#&gt; Hornet 4 Drive    20.01959</span>
+<span class="co">#&gt; Hornet Sportabout 17.84620</span>
+<span class="co">#&gt; Valiant           19.33092</span>
+<span class="kw">predict</span>(unwrapped_model, <span class="kw">head</span>(X))
+<span class="co">#&gt;                          1</span>
+<span class="co">#&gt; Mazda RX4         22.25028</span>
+<span class="co">#&gt; Mazda RX4 Wag     22.25028</span>
+<span class="co">#&gt; Datsun 710        22.73249</span>
+<span class="co">#&gt; Hornet 4 Drive    20.01959</span>
+<span class="co">#&gt; Hornet Sportabout 17.84620</span>
+<span class="co">#&gt; Valiant           19.33092</span></code></pre></div>
 <p>This creates a new S3 generic <code>cv.glmnet</code>, sets the provided function as the default method (<code>cv.glmnet.default</code>), and adds a formula method <code>cv.glmnet.formula</code> using <code>formulize</code>.</p>
-<p>This will mask <code>cv.glmnet</code> and features no safety checks because it’s fun when things burn down.</p>
+<p>This will mask <code>cv.glmnet</code> and features no safety checks because safety isn’t fun.</p>
 </div>
-</div>
-<div id="some-notes" class="section level1">
-<h1 class="hasAnchor">
-<a href="#some-notes" class="anchor"></a>Some notes</h1>
+<div id="caveats" class="section level2">
+<h2 class="hasAnchor">
+<a href="#caveats" class="anchor"></a>Caveats</h2>
 <ul>
-<li>Currently the formula methods always remove intercepts. This will change soon.</li>
-<li>If you just want a formula interface to <code>glmnet</code>, take a look at <a href="https://github.com/Hong-Revo/glmnetUtils">glmnetUtils</a>
-</li>
+<li>
+<code>formulize</code> doesn’t do anything special with intercepts. This means that you need to careful with functions that require you to specify intercepts in non-standard ways, such as <code>cv.glmnet</code> above.</li>
+<li>If the original modelling function doesn’t return a list, <code>formulize</code> will probably break.</li>
+<li>If you’re just looking for a formula interface to <code>glmnet</code>, take a look at <a href="https://github.com/Hong-Revo/glmnetUtils">glmnetUtils</a>.</li>
 </ul>
+</div>
 </div>
 </div>
   </div>
@@ -121,6 +144,11 @@ glmnet_model<span class="op">$</span>formula
 <h2>Developers</h2>
 <ul class="list-unstyled">
 <li>Alex Hayes <br><small class="roles"> Author, maintainer </small> </li>
+</ul>
+<h2>Dev status</h2>
+<ul class="list-unstyled">
+<li><a href="https://travis-ci.org/alexpghayes/formulize"><img src="https://travis-ci.org/alexpghayes/formulize.svg?branch=master" alt="Travis build status"></a></li>
+<li><a href="https://codecov.io/github/alexpghayes/formulize?branch=master"><img src="https://codecov.io/gh/alexpghayes/formulize/branch/master/graph/badge.svg" alt="Coverage status"></a></li>
 </ul>
 </div>
 

@@ -1,5 +1,7 @@
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
+[![Travis build status](https://travis-ci.org/alexpghayes/formulize.svg?branch=master)](https://travis-ci.org/alexpghayes/formulize) [![Coverage status](https://codecov.io/gh/alexpghayes/formulize/branch/master/graph/badge.svg)](https://codecov.io/github/alexpghayes/formulize?branch=master)
+
 formulize
 =========
 
@@ -10,7 +12,7 @@ If you:
 -   don't have the time or motivation to write a formula wrapper around these interfaces
 -   like untested and hacky software written by amateurs
 
-then `formulize` may be for you. Formulize is currently entirely untested, but you can still install formulize from github with:
+then `formulize` may be for you. Formulize is very new, but you can still install formulize from github with:
 
 ``` r
 # install.packages("devtools")
@@ -20,7 +22,7 @@ devtools::install_github("alexpghayes/formulize")
 Adding a formula interface
 --------------------------
 
-Say you want to add a formula interface to an existing modelling function, say `glmnet`. Then you could do the following
+Suppose you want to add a formula interface to an existing modelling function, say `cv.glmnet`. Then you could do the following
 
 ``` r
 library(formulize)
@@ -32,8 +34,8 @@ library(glmnet)
 
 glmnet_cv <- formulize(cv.glmnet)
 
-glmnet_model <- glmnet_cv(mpg ~ drat + hp, mtcars)
-head(predict(glmnet_model, mtcars))
+glmnet_model <- glmnet_cv(mpg ~ drat + hp - 1, mtcars)
+predict(glmnet_model, head(mtcars))
 #>                          1
 #> Mazda RX4         22.25028
 #> Mazda RX4 Wag     22.25028
@@ -43,30 +45,46 @@ head(predict(glmnet_model, mtcars))
 #> Valiant           19.33092
 ```
 
-How it works: `formulize` creates a copy of function, in this case `cv.glmnet`. This wrapper then works like the origninal function, except it also makes the output of the original function a `wrapped` object and adds a new element `formula`:
-
-``` r
-class(glmnet_model)
-#> [1] "wrapped"   "cv.glmnet"
-glmnet_model$formula
-#> mpg ~ drat + hp
-#> <environment: 0x00000000078e2a20>
-```
-
-If the original modelling function doesn't return a list, `formulize` will probably break. Everything should work like normal, except for prediction, in which case there's a special S3 method for `wrapped` objects. Methods that require translation into matrix data format will probably not work, but otherwise things should work as normal.
-
 You may also be interested in the more ~~dangerous~~ exciting version `genericize`, which you should call for its side effects.
 
 ``` r
-genericize(cv.glmnet)  # NOTE: do not do: genericize(glmnet::cv.glmnet) atm
+genericize(cv.glmnet)
+
+form <- mpg ~ drat + hp - 1
+X <- model.matrix(form, mtcars)
+y <- mtcars$mpg
+
+set.seed(27)
+wrapped_model <- cv.glmnet(form, mtcars, intercept = TRUE)
+
+set.seed(27)
+unwrapped_model <- cv.glmnet(X, y, intercept = TRUE)
+
+predict(wrapped_model, head(mtcars))
+#>                          1
+#> Mazda RX4         22.25028
+#> Mazda RX4 Wag     22.25028
+#> Datsun 710        22.73249
+#> Hornet 4 Drive    20.01959
+#> Hornet Sportabout 17.84620
+#> Valiant           19.33092
+predict(unwrapped_model, head(X))
+#>                          1
+#> Mazda RX4         22.25028
+#> Mazda RX4 Wag     22.25028
+#> Datsun 710        22.73249
+#> Hornet 4 Drive    20.01959
+#> Hornet Sportabout 17.84620
+#> Valiant           19.33092
 ```
 
 This creates a new S3 generic `cv.glmnet`, sets the provided function as the default method (`cv.glmnet.default`), and adds a formula method `cv.glmnet.formula` using `formulize`.
 
-This will mask `cv.glmnet` and features no safety checks because it's fun when things burn down.
+This will mask `cv.glmnet` and features no safety checks because safety isn't fun.
 
-Some notes
-==========
+Caveats
+-------
 
--   Currently the formula methods always remove intercepts. This will change soon.
--   If you just want a formula interface to `glmnet`, take a look at [glmnetUtils](https://github.com/Hong-Revo/glmnetUtils)
+-   `formulize` doesn't do anything special with intercepts. This means that you need to careful with functions that require you to specify intercepts in non-standard ways, such as `cv.glmnet` above.
+-   If the original modelling function doesn't return a list, `formulize` will probably break.
+-   If you're just looking for a formula interface to `glmnet`, take a look at [glmnetUtils](https://github.com/Hong-Revo/glmnetUtils).

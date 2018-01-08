@@ -2,17 +2,21 @@
 % Please edit documentation in R/formulize.R
 \name{predict.wrapped}
 \alias{predict.wrapped}
-\title{TODOCUMENTDO}
+\title{Predict on new data form a \code{wrapped} object}
 \usage{
 \method{predict}{wrapped}(object, newdata = NULL, ...)
 }
 \arguments{
-\item{object}{doc doc}
+\item{object}{Object of class \code{wrapped} with a subclass with a
+valid \code{predict} method.}
 
-\item{newdata}{more doc}
+\item{newdata}{Data to predict on.}
 
-\item{...}{woops}
+\item{...}{Additional arguments to pass to the subclass predict method.}
+}
+\value{
+Predictions from subclass predict method.
 }
 \description{
-TODOCUMENTDO
+Predict on new data form a \code{wrapped} object
 }

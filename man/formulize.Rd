@@ -2,13 +2,26 @@
 % Please edit documentation in R/formulize.R
 \name{formulize}
 \alias{formulize}
-\title{Also meeeee}
+\title{Create a formula interface to a modelling method}
 \usage{
 formulize(f)
 }
 \arguments{
-\item{f}{nother thing}
+\item{f}{A function with a matrix/vector interface.}
+}
+\value{
+The same function, wrapped to have a formula/dataframe interface.
 }
 \description{
-TODO: better search for X, y arguments other than positional matching
+Create a formula interface to a modelling method
+}
+\examples{
+
+library(glmnet)
+
+glmnet_form <- formulize(cv.glmnet)
+
+model <- glmnet_form(mpg ~ drat * hp - 1, mtcars)
+predict(model, head(mtcars))
+
 }

@@ -64,7 +64,7 @@
 
 <p>If you:</p>
 <ul>
-<li>like using formulas and data frames to specify design matrices</li>
+<li>like using formulas, recipes and data frames to specify design matrices</li>
 <li>develop nervous ticks when you come across modelling packages that only offer matrix/vector interfaces</li>
 <li>don’t have the time or motivation to write a formula wrapper around these interfaces</li>
 <li>like untested and hacky software written by amateurs</li>
@@ -72,28 +72,37 @@
 <p>then <code>formulize</code> may be for you. Formulize is very new, but you can still install formulize from github with:</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># install.packages("devtools")</span>
 devtools<span class="op">::</span><span class="kw"><a href="http://www.rdocumentation.org/packages/devtools/topics/install_github">install_github</a></span>(<span class="st">"alexpghayes/formulize"</span>)</code></pre></div>
-<div id="adding-a-formula-interface" class="section level2">
+<div id="adding-a-formula-or-recipe-interface" class="section level2">
 <h2 class="hasAnchor">
-<a href="#adding-a-formula-interface" class="anchor"></a>Adding a formula interface</h2>
+<a href="#adding-a-formula-or-recipe-interface" class="anchor"></a>Adding a formula or recipe interface</h2>
 <p>Suppose you want to add a formula interface to an existing modelling function, say <code>cv.glmnet</code>. Then you could do the following</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(formulize)
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(recipes)
 <span class="kw">library</span>(glmnet)
-<span class="co">#&gt; Loading required package: Matrix</span>
-<span class="co">#&gt; Loading required package: foreach</span>
-<span class="co">#&gt; Warning: package 'foreach' was built under R version 3.4.3</span>
-<span class="co">#&gt; Loaded glmnet 2.0-13</span>
+<span class="kw">library</span>(formulize)
 
 glmnet_cv &lt;-<span class="st"> </span><span class="kw"><a href="reference/formulize.html">formulize</a></span>(cv.glmnet)
 
 glmnet_model &lt;-<span class="st"> </span><span class="kw">glmnet_cv</span>(mpg <span class="op">~</span><span class="st"> </span>drat <span class="op">+</span><span class="st"> </span>hp <span class="op">-</span><span class="st"> </span><span class="dv">1</span>, mtcars)
 <span class="kw">predict</span>(glmnet_model, <span class="kw">head</span>(mtcars))
 <span class="co">#&gt;                          1</span>
-<span class="co">#&gt; Mazda RX4         22.25028</span>
-<span class="co">#&gt; Mazda RX4 Wag     22.25028</span>
-<span class="co">#&gt; Datsun 710        22.73249</span>
-<span class="co">#&gt; Hornet 4 Drive    20.01959</span>
-<span class="co">#&gt; Hornet Sportabout 17.84620</span>
-<span class="co">#&gt; Valiant           19.33092</span></code></pre></div>
+<span class="co">#&gt; Mazda RX4         22.35385</span>
+<span class="co">#&gt; Mazda RX4 Wag     22.35385</span>
+<span class="co">#&gt; Datsun 710        22.85056</span>
+<span class="co">#&gt; Hornet 4 Drive    19.97909</span>
+<span class="co">#&gt; Hornet Sportabout 17.72895</span>
+<span class="co">#&gt; Valiant           19.24104</span></code></pre></div>
+<p>Similarly <code>glmnet_cv</code> works with recipe objects like so</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">rec &lt;-<span class="st"> </span><span class="kw">recipe</span>(mpg <span class="op">~</span><span class="st"> </span>drat <span class="op">+</span><span class="st"> </span>hp, <span class="dt">data =</span> mtcars)
+
+glmnet_model2 &lt;-<span class="st"> </span><span class="kw">glmnet_cv</span>(rec, mtcars)
+<span class="kw">predict</span>(glmnet_model2, <span class="kw">head</span>(mtcars))
+<span class="co">#&gt;             1</span>
+<span class="co">#&gt; [1,] 22.13669</span>
+<span class="co">#&gt; [2,] 22.13669</span>
+<span class="co">#&gt; [3,] 22.60297</span>
+<span class="co">#&gt; [4,] 20.06390</span>
+<span class="co">#&gt; [5,] 17.97475</span>
+<span class="co">#&gt; [6,] 19.42933</span></code></pre></div>
 <p>You may also be interested in the more <del>dangerous</del> exciting version <code>genericize</code>, which you should call for its side effects.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw"><a href="reference/genericize.html">genericize</a></span>(cv.glmnet)
 
@@ -102,12 +111,15 @@ X &lt;-<span class="st"> </span><span class="kw">model.matrix</span>(form, mtcar
 y &lt;-<span class="st"> </span>mtcars<span class="op">$</span>mpg
 
 <span class="kw">set.seed</span>(<span class="dv">27</span>)
-wrapped_model &lt;-<span class="st"> </span><span class="kw">cv.glmnet</span>(form, mtcars, <span class="dt">intercept =</span> <span class="ot">TRUE</span>)
+mat_model &lt;-<span class="st"> </span><span class="kw">cv.glmnet</span>(X, y, <span class="dt">intercept =</span> <span class="ot">TRUE</span>)
 
 <span class="kw">set.seed</span>(<span class="dv">27</span>)
-unwrapped_model &lt;-<span class="st"> </span><span class="kw">cv.glmnet</span>(X, y, <span class="dt">intercept =</span> <span class="ot">TRUE</span>)
+frm_model &lt;-<span class="st"> </span><span class="kw">cv.glmnet</span>(form, mtcars, <span class="dt">intercept =</span> <span class="ot">TRUE</span>)
 
-<span class="kw">predict</span>(wrapped_model, <span class="kw">head</span>(mtcars))
+<span class="kw">set.seed</span>(<span class="dv">27</span>)
+rec_model &lt;-<span class="st"> </span><span class="kw">cv.glmnet</span>(rec, mtcars, <span class="dt">intercept =</span> <span class="ot">TRUE</span>)
+
+<span class="kw">predict</span>(mat_model, <span class="kw">head</span>(X))
 <span class="co">#&gt;                          1</span>
 <span class="co">#&gt; Mazda RX4         22.25028</span>
 <span class="co">#&gt; Mazda RX4 Wag     22.25028</span>
@@ -115,14 +127,22 @@ unwrapped_model &lt;-<span class="st"> </span><span class="kw">cv.glmnet</span>(
 <span class="co">#&gt; Hornet 4 Drive    20.01959</span>
 <span class="co">#&gt; Hornet Sportabout 17.84620</span>
 <span class="co">#&gt; Valiant           19.33092</span>
-<span class="kw">predict</span>(unwrapped_model, <span class="kw">head</span>(X))
+<span class="kw">predict</span>(frm_model, <span class="kw">head</span>(mtcars))
 <span class="co">#&gt;                          1</span>
 <span class="co">#&gt; Mazda RX4         22.25028</span>
 <span class="co">#&gt; Mazda RX4 Wag     22.25028</span>
 <span class="co">#&gt; Datsun 710        22.73249</span>
 <span class="co">#&gt; Hornet 4 Drive    20.01959</span>
 <span class="co">#&gt; Hornet Sportabout 17.84620</span>
-<span class="co">#&gt; Valiant           19.33092</span></code></pre></div>
+<span class="co">#&gt; Valiant           19.33092</span>
+<span class="kw">predict</span>(rec_model, <span class="kw">head</span>(mtcars))
+<span class="co">#&gt;             1</span>
+<span class="co">#&gt; [1,] 22.25035</span>
+<span class="co">#&gt; [2,] 22.25035</span>
+<span class="co">#&gt; [3,] 22.73255</span>
+<span class="co">#&gt; [4,] 20.01946</span>
+<span class="co">#&gt; [5,] 17.84608</span>
+<span class="co">#&gt; [6,] 19.33070</span></code></pre></div>
 <p>This creates a new S3 generic <code>cv.glmnet</code>, sets the provided function as the default method (<code>cv.glmnet.default</code>), and adds a formula method <code>cv.glmnet.formula</code> using <code>formulize</code>.</p>
 <p>This will mask <code>cv.glmnet</code> and features no safety checks because safety isn’t fun.</p>
 </div>

@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Create a formula interface to a modelling method — formulize â€¢ formulize</title>
+<title>Create a formula/recipe interface to a modelling method — formulize â€¢ formulize</title>
 
 <!-- jquery -->
 <script src="https://code.jquery.com/jquery-3.1.0.min.js" integrity="sha384-nrOSfDHtoPMzJHjVTdCopGqIqeYETSXhZDFyniQ8ZHcVy08QesyHcnOUpMpqnmWq" crossorigin="anonymous"></script>
@@ -78,11 +78,11 @@
       <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Create a formula interface to a modelling method</h1>
+    <h1>Create a formula/recipe interface to a modelling method</h1>
     </div>
 
     
-    <p>Create a formula interface to a modelling method</p>
+    <p>Create a formula/recipe interface to a modelling method</p>
     
 
     <pre class="usage"><span class='fu'>formulize</span>(<span class='no'>f</span>)</pre>
@@ -92,13 +92,16 @@
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
       <th>f</th>
-      <td><p>A function with a matrix/vector interface.</p></td>
+      <td><p>A function with a matrix/vector interface. Assumes data is passed
+to this function via some combination of arguments <code>x</code>, <code>X</code>,
+<code>y</code>, <code>Y</code></p></td>
     </tr>
     </table>
     
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
-    <p>The same function, wrapped to have a formula/dataframe interface.</p>
+    <p>The same function, wrapped to have formula/dataframe and
+  recipe/dataframe interfaces.</p>
     
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>

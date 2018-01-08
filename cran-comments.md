@@ -1,7 +1,11 @@
+## Resubmission comments
+
+Corrected LICENSE format to comply with CRAN standards.
+
 ## Test environments
 
 * local Windows 8 install, R 3.4.1
-* ubuntu (on travis-ci), R 3.4.3
+* ubuntu (on travis-ci), R 3.1, 3.2, oldrel, release, devel
 * win-builder (devel and release)
 
 ## R CMD check results

@@ -3,7 +3,7 @@
 formulize
 =========
 
-[![Travis build status](https://travis-ci.org/alexpghayes/formulize.svg?branch=master)](https://travis-ci.org/alexpghayes/formulize) [![AppVeyor Build Status](https://ci.appveyor.com/api/projects/status/github/alexpghayes/formulize?branch=master&svg=true)](https://ci.appveyor.com/project/alexpghayes/formulize) [![Coverage status](https://codecov.io/gh/alexpghayes/formulize/branch/master/graph/badge.svg)](https://codecov.io/github/alexpghayes/formulize?branch=master)
+[![Travis build status](https://travis-ci.org/alexpghayes/formulize.svg?branch=master)](https://travis-ci.org/alexpghayes/formulize) [![AppVeyor Build Status](https://ci.appveyor.com/api/projects/status/github/alexpghayes/formulize?branch=master&svg=true)](https://ci.appveyor.com/project/alexpghayes/formulize) [![Coverage status](https://codecov.io/gh/alexpghayes/formulize/branch/master/graph/badge.svg)](https://codecov.io/github/alexpghayes/formulize?branch=master) [![CRAN\_Status\_Badge](http://www.r-pkg.org/badges/version/formulize)](https://cran.rstudio.com/web/packages/formulize/index.html) ![Downloads](http://cranlogs.r-pkg.org/badges/formulize)
 
 If you:
 
@@ -34,12 +34,12 @@ glmnet_cv <- formulize(cv.glmnet)
 glmnet_model <- glmnet_cv(mpg ~ drat + hp - 1, mtcars)
 predict(glmnet_model, head(mtcars))
 #>                          1
-#> Mazda RX4         22.35385
-#> Mazda RX4 Wag     22.35385
-#> Datsun 710        22.85056
-#> Hornet 4 Drive    19.97909
-#> Hornet Sportabout 17.72895
-#> Valiant           19.24104
+#> Mazda RX4         22.01185
+#> Mazda RX4 Wag     22.01185
+#> Datsun 710        22.46068
+#> Hornet 4 Drive    20.11283
+#> Hornet Sportabout 18.11610
+#> Valiant           19.53782
 ```
 
 Similarly `glmnet_cv` works with recipe objects like so
@@ -50,12 +50,12 @@ rec <- recipe(mpg ~ drat + hp, data = mtcars)
 glmnet_model2 <- glmnet_cv(rec, mtcars)
 predict(glmnet_model2, head(mtcars))
 #>             1
-#> [1,] 22.35392
-#> [2,] 22.35392
-#> [3,] 22.85062
-#> [4,] 19.97897
-#> [5,] 17.72884
-#> [6,] 19.24084
+#> [1,] 22.25035
+#> [2,] 22.25035
+#> [3,] 22.73255
+#> [4,] 20.01946
+#> [5,] 17.84608
+#> [6,] 19.33070
 ```
 
 You may also be interested in the more ~~dangerous~~ exciting version `genericize`, which you should call for its side effects.

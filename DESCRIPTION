@@ -5,11 +5,11 @@ Authors@R: person("Alex", "Hayes", , "alexpghayes@gmail.com", c("aut", "cre"))
 Description: Automatically generates wrappers for modelling functions
     that accept data as a data matrix X and a data vector y and produces
     a wrapper that allows users to specify input data with a formula and a data frame.
-    In addition to generating formula interfaces, users may also generated wrapper S3
+    In addition to generating formula interfaces, users may also generate wrapped S3
     generics.
 License: MIT + file LICENSE
 Depends: 
-    R (>= 3.4)
+    R (>= 3.3)
 Imports: 
     rlang,
     recipes

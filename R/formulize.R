@@ -93,6 +93,14 @@ formulize <- function(f) {
   }
 }
 
+# stolen from isS3stdGeneric to backport R 3.1, 3.2, 3.3
+already_generic <- function(f) {
+  bdexpr <- body(f)
+  while (as.character(bdexpr[[1L]]) == "{") bdexpr <- bdexpr[[2L]]
+  is.call(bdexpr) && identical(bdexpr[[1L]], as.name("UseMethod"))
+}
+
+
 #' Turn a modelling function into an S3 modelling generic
 #'
 #' Call this function for its side effects: (1) creating an S3 generic of the
@@ -112,7 +120,7 @@ genericize <- function(f, fname = NULL) {
   if ("::" %in% fname || ":::" %in% fname)
     stop("Do not use genericize with double or triple colon operators.")
 
-  if (utils::isS3stdGeneric(f))
+  if (already_generic(f))
     stop(paste("S3 generic already exists for this function."))
 
   env <- globalenv()

@@ -1,6 +1,6 @@
 ## Resubmission comments
 
-Corrected LICENSE format to comply with CRAN standards.
+Provided more accurate package description.
 
 ## Test environments
 

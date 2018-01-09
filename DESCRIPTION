@@ -1,5 +1,5 @@
 Package: formulize
-Title: Add Formula Interfaces to R Packages
+Title: Add Formula Interfaces to Modelling Functions
 Version: 0.1.0
 Authors@R: person("Alex", "Hayes", , "alexpghayes@gmail.com", c("aut", "cre"))
 Description: Automatically generates wrappers for modelling functions

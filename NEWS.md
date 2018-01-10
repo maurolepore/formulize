@@ -1,6 +1,6 @@
 # formulize 0.1.0.9000
 
-- Relax R dependency to R 3.1+
+- Relax R dependency to R 3.2+
 
 # formulize 0.1.0
 

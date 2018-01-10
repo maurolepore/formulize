@@ -12,7 +12,13 @@ If you:
 -   don't have the time or motivation to write a formula wrapper around these interfaces
 -   like untested and hacky software written by amateurs
 
-then `formulize` may be for you. Formulize is very new, but you can still install formulize from github with:
+then `formulize` may be for you. Formulize is very new, but you can install it from CRAN if you have R 3.4+ with:
+
+``` r
+install.packages("formulize")
+```
+
+You can get the development version (recommended) with:
 
 ``` r
 # install.packages("devtools")
@@ -34,12 +40,12 @@ glmnet_cv <- formulize(cv.glmnet)
 glmnet_model <- glmnet_cv(mpg ~ drat + hp - 1, mtcars)
 predict(glmnet_model, head(mtcars))
 #>                          1
-#> Mazda RX4         22.01185
-#> Mazda RX4 Wag     22.01185
-#> Datsun 710        22.46068
-#> Hornet 4 Drive    20.11283
-#> Hornet Sportabout 18.11610
-#> Valiant           19.53782
+#> Mazda RX4         22.13660
+#> Mazda RX4 Wag     22.13660
+#> Datsun 710        22.60290
+#> Hornet 4 Drive    20.06405
+#> Hornet Sportabout 17.97487
+#> Valiant           19.42956
 ```
 
 Similarly `glmnet_cv` works with recipe objects like so
@@ -50,12 +56,12 @@ rec <- recipe(mpg ~ drat + hp, data = mtcars)
 glmnet_model2 <- glmnet_cv(rec, mtcars)
 predict(glmnet_model2, head(mtcars))
 #>             1
-#> [1,] 22.25035
-#> [2,] 22.25035
-#> [3,] 22.73255
-#> [4,] 20.01946
-#> [5,] 17.84608
-#> [6,] 19.33070
+#> [1,] 22.44828
+#> [2,] 22.44828
+#> [3,] 22.95820
+#> [4,] 19.94207
+#> [5,] 17.62202
+#> [6,] 19.15896
 ```
 
 You may also be interested in the more ~~dangerous~~ exciting version `genericize`, which you should call for its side effects.

@@ -63,7 +63,7 @@ test_that("genericize works", {
   expect_error(genericize(mean))
   expect_error(genericize(glmnet::cv.glmnet))
 
-  expect_false(utils::isS3stdGeneric(cv.glmnet))
+  expect_false(already_generic(cv.glmnet))
 
   genericize(cv.glmnet)  # call for side effects
 
@@ -95,7 +95,7 @@ test_that("genericize works", {
 
   genericize(glmnet, "gnet")  # call for side effects
 
-  expect_true(utils::isS3stdGeneric(gnet))
+  expect_true(already_generic(gnet))
   expect_equal(gnet.formula, formulize(glmnet))
   expect_true(is.function(gnet.default))
 

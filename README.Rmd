@@ -28,9 +28,15 @@ If you:
 - don't have the time or motivation to write a formula wrapper around these interfaces
 - like untested and hacky software written by amateurs
 
-then `formulize` may be for you. Formulize is very new, but you can still install formulize from github with:
+then `formulize` may be for you. Formulize is very new, but you can install it from CRAN if you have R 3.4+ with:
 
-```{r gh-installation, eval = FALSE}
+```{r, eval = FALSE}
+install.packages("formulize")
+```
+
+You can get the development version (recommended) with:
+
+```{r, eval = FALSE}
 # install.packages("devtools")
 devtools::install_github("alexpghayes/formulize")
 ```

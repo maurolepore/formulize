@@ -93,7 +93,7 @@ formulize <- function(f) {
   }
 }
 
-# stolen from isS3stdGeneric to backport R 3.1, 3.2, 3.3
+# stolen from utils::isS3stdGeneric to backport R 3.1, 3.2, 3.3
 already_generic <- function(f) {
   bdexpr <- body(f)
   while (as.character(bdexpr[[1L]]) == "{") bdexpr <- bdexpr[[2L]]

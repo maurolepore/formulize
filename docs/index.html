@@ -5,7 +5,7 @@
 <meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Add Formula Interfaces to R Packages • formulize</title>
+<title>Add Formula Interfaces to Modelling Functions • formulize</title>
 <!-- jquery --><script src="https://code.jquery.com/jquery-3.1.0.min.js" integrity="sha384-nrOSfDHtoPMzJHjVTdCopGqIqeYETSXhZDFyniQ8ZHcVy08QesyHcnOUpMpqnmWq" crossorigin="anonymous"></script><!-- Bootstrap --><link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script><!-- Font Awesome icons --><link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet" integrity="sha384-T8Gy5hrqNKT+hzMclPo118YTQO6cYprQmhrYwIiQ/3axmI1hQomh7Ud2hPOy8SP1" crossorigin="anonymous">
 <!-- pkgdown --><link href="pkgdown.css" rel="stylesheet">
@@ -61,7 +61,7 @@
 <div id="formulize" class="section level1">
 <div class="page-header"><h1 class="hasAnchor">
 <a href="#formulize" class="anchor"></a>formulize</h1></div>
-
+<p><a href="https://travis-ci.org/alexpghayes/formulize"><img src="https://travis-ci.org/alexpghayes/formulize.svg?branch=master" alt="Travis build status"></a> <a href="https://ci.appveyor.com/project/alexpghayes/formulize"><img src="https://ci.appveyor.com/api/projects/status/github/alexpghayes/formulize?branch=master&amp;svg=true" alt="AppVeyor Build Status"></a> <a href="https://codecov.io/github/alexpghayes/formulize?branch=master"><img src="https://codecov.io/gh/alexpghayes/formulize/branch/master/graph/badge.svg" alt="Coverage status"></a> <a href="https://cran.rstudio.com/web/packages/formulize/index.html"><img src="http://www.r-pkg.org/badges/version/formulize" alt="CRAN_Status_Badge"></a> <img src="http://cranlogs.r-pkg.org/badges/formulize" alt="Downloads"></p>
 <p>If you:</p>
 <ul>
 <li>like using formulas, recipes and data frames to specify design matrices</li>
@@ -69,7 +69,9 @@
 <li>don’t have the time or motivation to write a formula wrapper around these interfaces</li>
 <li>like untested and hacky software written by amateurs</li>
 </ul>
-<p>then <code>formulize</code> may be for you. Formulize is very new, but you can still install formulize from github with:</p>
+<p>then <code>formulize</code> may be for you. Formulize is very new, but you can install it from CRAN if you have R 3.4+ with:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">install.packages</span>(<span class="st">"formulize"</span>)</code></pre></div>
+<p>You can get the development version (recommended) with:</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># install.packages("devtools")</span>
 devtools<span class="op">::</span><span class="kw"><a href="http://www.rdocumentation.org/packages/devtools/topics/install_github">install_github</a></span>(<span class="st">"alexpghayes/formulize"</span>)</code></pre></div>
 <div id="adding-a-formula-or-recipe-interface" class="section level2">
@@ -85,24 +87,24 @@ glmnet_cv &lt;-<span class="st"> </span><span class="kw"><a href="reference/form
 glmnet_model &lt;-<span class="st"> </span><span class="kw">glmnet_cv</span>(mpg <span class="op">~</span><span class="st"> </span>drat <span class="op">+</span><span class="st"> </span>hp <span class="op">-</span><span class="st"> </span><span class="dv">1</span>, mtcars)
 <span class="kw">predict</span>(glmnet_model, <span class="kw">head</span>(mtcars))
 <span class="co">#&gt;                          1</span>
-<span class="co">#&gt; Mazda RX4         22.35385</span>
-<span class="co">#&gt; Mazda RX4 Wag     22.35385</span>
-<span class="co">#&gt; Datsun 710        22.85056</span>
-<span class="co">#&gt; Hornet 4 Drive    19.97909</span>
-<span class="co">#&gt; Hornet Sportabout 17.72895</span>
-<span class="co">#&gt; Valiant           19.24104</span></code></pre></div>
+<span class="co">#&gt; Mazda RX4         22.13660</span>
+<span class="co">#&gt; Mazda RX4 Wag     22.13660</span>
+<span class="co">#&gt; Datsun 710        22.60290</span>
+<span class="co">#&gt; Hornet 4 Drive    20.06405</span>
+<span class="co">#&gt; Hornet Sportabout 17.97487</span>
+<span class="co">#&gt; Valiant           19.42956</span></code></pre></div>
 <p>Similarly <code>glmnet_cv</code> works with recipe objects like so</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">rec &lt;-<span class="st"> </span><span class="kw">recipe</span>(mpg <span class="op">~</span><span class="st"> </span>drat <span class="op">+</span><span class="st"> </span>hp, <span class="dt">data =</span> mtcars)
 
 glmnet_model2 &lt;-<span class="st"> </span><span class="kw">glmnet_cv</span>(rec, mtcars)
 <span class="kw">predict</span>(glmnet_model2, <span class="kw">head</span>(mtcars))
 <span class="co">#&gt;             1</span>
-<span class="co">#&gt; [1,] 22.13669</span>
-<span class="co">#&gt; [2,] 22.13669</span>
-<span class="co">#&gt; [3,] 22.60297</span>
-<span class="co">#&gt; [4,] 20.06390</span>
-<span class="co">#&gt; [5,] 17.97475</span>
-<span class="co">#&gt; [6,] 19.42933</span></code></pre></div>
+<span class="co">#&gt; [1,] 22.35392</span>
+<span class="co">#&gt; [2,] 22.35392</span>
+<span class="co">#&gt; [3,] 22.85062</span>
+<span class="co">#&gt; [4,] 19.97897</span>
+<span class="co">#&gt; [5,] 17.72884</span>
+<span class="co">#&gt; [6,] 19.24084</span></code></pre></div>
 <p>You may also be interested in the more <del>dangerous</del> exciting version <code>genericize</code>, which you should call for its side effects.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw"><a href="reference/genericize.html">genericize</a></span>(cv.glmnet)
 
@@ -143,7 +145,7 @@ rec_model &lt;-<span class="st"> </span><span class="kw">cv.glmnet</span>(rec, m
 <span class="co">#&gt; [4,] 20.01946</span>
 <span class="co">#&gt; [5,] 17.84608</span>
 <span class="co">#&gt; [6,] 19.33070</span></code></pre></div>
-<p>This creates a new S3 generic <code>cv.glmnet</code>, sets the provided function as the default method (<code>cv.glmnet.default</code>), and adds a formula method <code>cv.glmnet.formula</code> using <code>formulize</code>.</p>
+<p>This creates a new S3 generic <code>cv.glmnet</code>, sets the provided function as the default method (<code>cv.glmnet.default</code>), and adds methods <code>cv.glmnet.formula</code> and <code>cv.glmnet.recipe</code> using <code>formulize</code>.</p>
 <p>This will mask <code>cv.glmnet</code> and features no safety checks because safety isn’t fun.</p>
 </div>
 <div id="caveats" class="section level2">
@@ -162,17 +164,16 @@ rec_model &lt;-<span class="st"> </span><span class="kw">cv.glmnet</span>(rec, m
 
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
     <h2 class="hasAnchor">
-<a href="#sidebar" class="anchor"></a>License</h2>
+<a href="#sidebar" class="anchor"></a>Links</h2>
+<ul class="list-unstyled">
+<li>Download from CRAN at <br><a href="https://cran.r-project.org/package=formulize">https://​cran.r-project.org/​package=formulize</a>
+</li>
+</ul>
+<h2>License</h2>
 <p><a href="https://opensource.org/licenses/mit-license.php">MIT</a> + file <a href="LICENSE.html">LICENSE</a></p>
 <h2>Developers</h2>
 <ul class="list-unstyled">
 <li>Alex Hayes <br><small class="roles"> Author, maintainer </small> </li>
-</ul>
-<h2>Dev status</h2>
-<ul class="list-unstyled">
-<li><a href="https://travis-ci.org/alexpghayes/formulize"><img src="https://travis-ci.org/alexpghayes/formulize.svg?branch=master" alt="Travis build status"></a></li>
-<li><a href="https://ci.appveyor.com/project/alexpghayes/formulize"><img src="https://ci.appveyor.com/api/projects/status/github/alexpghayes/formulize?branch=master&amp;svg=true" alt="AppVeyor Build Status"></a></li>
-<li><a href="https://codecov.io/github/alexpghayes/formulize?branch=master"><img src="https://codecov.io/gh/alexpghayes/formulize/branch/master/graph/badge.svg" alt="Coverage status"></a></li>
 </ul>
 </div>
 

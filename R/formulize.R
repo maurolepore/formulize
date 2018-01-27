@@ -2,27 +2,33 @@ get_design <- function(design, data, ...) {
   UseMethod("get_design")
 }
 
+#' @importFrom stats model.frame model.matrix model.response terms
 get_design.formula <- function(formula, data, ...) {
 
-  y <- stats::model.response(stats::model.frame(formula, data))
-  X <- stats::model.matrix(formula, data)
+  if (any(grepl("as.character|as.factor", formula)))
+    stop("Formulize does not permit type conversion in formulas.")
+
+  mf <- model.frame(formula, data)
+  mt <- terms(mf)
+  X <- model.matrix(mt, mf)
+  y <- model.response(mf)
 
   assign <- attr(X, "assign")
   intercept <- 0 %in% assign        # check if formula included intercept term
 
   if (intercept && length(assign) == 1) {
-    warning("Intercept only models may break things.")
+    stop("Formulize does not permit intercept only models.")
   }
 
-  list(X = X, y = y, intercept = intercept)
+  list(X = X, y = y, intercept = intercept, map = mt)
 }
 
-#' @importFrom recipes all_predictors all_outcomes
+#' @importFrom recipes all_predictors all_outcomes prep bake
 get_design.recipe <- function(recipe, data, ...) {
 
-  prepped <- recipes::prep(recipe)
-  X <- recipes::bake(prepped, data, all_predictors())
-  y <- recipes::bake(prepped, data, all_outcomes())
+  prepped <- prep(recipe)
+  X <- bake(prepped, data, all_predictors())
+  y <- bake(prepped, data, all_outcomes())
 
   X <- as.matrix(X)
   y <- as.matrix(y)
@@ -31,7 +37,7 @@ get_design.recipe <- function(recipe, data, ...) {
   # TODO: update to detect_step after PR gets merged
   intercept <- "step_intercept" %in% unlist(lapply(prepped$steps, class))
 
-  list(X = X, y = y, intercept = intercept)
+  list(X = X, y = y, intercept = intercept, map = recipe)
 }
 
 #' Predict on new data form a \code{wrapped} object
@@ -43,15 +49,18 @@ get_design.recipe <- function(recipe, data, ...) {
 #'
 #' @return Predictions from subclass predict method.
 #' @export
-#' @importFrom recipes all_predictors
+#' @importFrom recipes all_predictors bake
+#' @importFrom stats model.frame model.matrix
 predict.wrapped <- function(object, newdata = NULL, ...) {
-
   des <- object$design
 
-  if (inherits(des, "formula")) {
-    newdata <- stats::model.matrix(des, newdata)
+  if (inherits(des, "terms")) {
+    # design was specified with formula
+    mf <- model.frame(des, as.data.frame(newdata))
+    newdata <- model.matrix(des, mf)
   } else {
-    newdata <- as.matrix(recipes::bake(des, newdata, all_predictors()))
+    # data was specified with recipe
+    newdata <- as.matrix(bake(des, newdata, all_predictors()))
   }
   NextMethod()
 }
@@ -81,13 +90,31 @@ formulize <- function(f) {
     des <- get_design(design, data)
 
     # the following can break if functions have both `x` and `X` as arguments
-    x_arg <- match.arg(c("x", "X"), names(formals(f)), several.ok = TRUE)
-    y_arg <- match.arg(c("y", "Y"), names(formals(f)), several.ok = TRUE)
+    f_args <- names(formals(f))
 
-    args <- list(des$X, des$y)
-    names(args) <- c(x_arg, y_arg)
+    xX <- c("x", "X")
+    yY <- c("y", "Y")
+
+    has_x_arg <- any(xX %in% f_args)
+    has_y_arg <- any(yY %in% f_args)
+
+    if (!has_x_arg)
+      stop("Formulize cannot find data argument.")
+
+    # unsupervised base f
+    x_arg <- match.arg(xX, f_args, several.ok = TRUE)
+    args <- list(des$X)
+    names(args) <- x_arg
+
+    # supervised base f
+    if (has_y_arg) {
+      y_arg <- match.arg(yY, f_args, several.ok = TRUE)
+      args <- list(des$X, des$y)
+      names(args) <- c(x_arg, y_arg)
+    }
+
     object <- do.call("f", args)
-    object$design <- design
+    object$design <- des$map
     class(object) <- c("wrapped", class(object))
     object
   }

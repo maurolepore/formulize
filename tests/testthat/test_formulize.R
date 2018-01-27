@@ -1,4 +1,4 @@
-context("test basic functionality")
+context("get_design, formulize, genericize")
 
 library(glmnet)
 library(recipes)
@@ -10,9 +10,6 @@ y <- mtcars$mpg
 rec <- recipe(form, data = mtcars)
 
 test_that("get_design.formula works", {
-
-  # warns on intercept only model
-  expect_warning(get_design(mpg ~ 1, mtcars))
 
   design <- get_design(form, mtcars)
 

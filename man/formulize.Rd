@@ -28,3 +28,8 @@ model <- glmnet_form(mpg ~ drat * hp - 1, mtcars)
 predict(model, head(mtcars))
 
 }
+\seealso{
+Other developed by an organizer of the Chicago R Unconference: \code{\link{genericize}},
+  \code{\link{predict.wrapped}}
+}
+\concept{developed by an organizer of the Chicago R Unconference}

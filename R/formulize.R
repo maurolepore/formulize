@@ -51,6 +51,7 @@ get_design.recipe <- function(recipe, data, ...) {
 #' @export
 #' @importFrom recipes all_predictors bake
 #' @importFrom stats model.frame model.matrix
+#' @family developed by an organizer of the Chicago R Unconference
 predict.wrapped <- function(object, newdata = NULL, ...) {
   des <- object$design
 
@@ -84,6 +85,7 @@ predict.wrapped <- function(object, newdata = NULL, ...) {
 #' model <- glmnet_form(mpg ~ drat * hp - 1, mtcars)
 #' predict(model, head(mtcars))
 #'
+#' @family developed by an organizer of the Chicago R Unconference
 formulize <- function(f) {
   function(design, data, ...) {
 
@@ -140,6 +142,7 @@ already_generic <- function(f) {
 #'
 #' @return Nothing.
 #' @export
+#' @family developed by an organizer of the Chicago R Unconference
 genericize <- function(f, fname = NULL) {
 
   fname <- if (is.null(fname)) as.character(substitute(f)) else fname

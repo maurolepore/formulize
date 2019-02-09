@@ -20,3 +20,8 @@ Predictions from subclass predict method.
 \description{
 Predict on new data form a \code{wrapped} object
 }
+\seealso{
+Other developed by an organizer of the Chicago R Unconference: \code{\link{formulize}},
+  \code{\link{genericize}}
+}
+\concept{developed by an organizer of the Chicago R Unconference}

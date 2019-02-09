@@ -21,7 +21,7 @@ passed modelling function, (2) creating a default method that's exactly the
 X/y interface to formulize, (3) creating a formula method with formulize.
 }
 \seealso{
-Other developed by an organizer of the Chicago R Unconference: \code{\link{formulize}},
+Other chirunconf: \code{\link{formulize}},
   \code{\link{predict.wrapped}}
 }
-\concept{developed by an organizer of the Chicago R Unconference}
+\concept{chirunconf}

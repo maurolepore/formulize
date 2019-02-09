@@ -29,7 +29,7 @@ predict(model, head(mtcars))
 
 }
 \seealso{
-Other developed by an organizer of the Chicago R Unconference: \code{\link{genericize}},
+Other chirunconf: \code{\link{genericize}},
   \code{\link{predict.wrapped}}
 }
-\concept{developed by an organizer of the Chicago R Unconference}
+\concept{chirunconf}
